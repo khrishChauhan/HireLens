@@ -10,12 +10,12 @@
 - [x] Verify required development tools.
 
 ## Phase 2: Application Foundation
-- [ ] Initialize Next.js frontend with TypeScript.
-- [ ] Initialize FastAPI backend.
-- [ ] Configure environment variables.
-- [ ] Create a health-check endpoint.
-- [ ] Connect frontend to backend.
-- [ ] Verify both applications run locally.
+- [x] Initialize Next.js frontend with TypeScript.
+- [x] Initialize FastAPI backend.
+- [x] Configure environment variables.
+- [x] Create a health-check endpoint.
+- [x] Connect frontend to backend.
+- [x] Verify both applications run locally.
 
 ## Phase 3: Database and Authentication
 - [ ] Design PostgreSQL schema.

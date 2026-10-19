@@ -1,26 +1,86 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FFFFFF;
+  --secondary: #FFF9FB;
+  --sidebar-bg: #FFFFFF;
+  --card-bg: #FFFFFF;
+  
+  --brand-pink: #D94683;
+  --brand-pink-hover: #BE356D;
+  --brand-pink-surface: #FFF0F5;
+  --brand-pink-border: #F5D5E2;
+  
+  --heading: #26212A;
+  --body: #6F6873;
+  --muted: #99919C;
+  --border-subtle: #F0EBEF;
+  
+  --status-success: #23845B;
+  --status-success-bg: #EBF6F1;
+  --status-success-border: #C6E7D7;
+  
+  --status-warning: #B7791F;
+  --status-warning-bg: #FEF8EC;
+  --status-warning-border: #F8E6C3;
+  
+  --status-error: #C24155;
+  --status-error-bg: #FDF2F4;
+  --status-error-border: #F7CCD3;
+  
+  --status-info: #5378C9;
+  --status-info-bg: #EFF4FC;
+  --status-info-border: #CCDDF7;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-page: #FFFFFF;
+  --color-secondary: #FFF9FB;
+  --color-sidebar: #FFFFFF;
+  --color-card: #FFFFFF;
+  
+  --color-pink-brand: #D94683;
+  --color-pink-hover: #BE356D;
+  --color-pink-surface: #FFF0F5;
+  --color-pink-border: #F5D5E2;
+  
+  --color-heading: #26212A;
+  --color-body: #6F6873;
+  --color-muted: #99919C;
+  --color-border-subtle: #F0EBEF;
+  
+  --color-status-success: #23845B;
+  --color-status-warning: #B7791F;
+  --color-status-error: #C24155;
+  --color-status-info: #5378C9;
+  
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #FFFFFF;
+  color: #6F6873;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbars for clean SaaS feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF9FB;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #F0EBEF;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #F5D5E2;
 }
