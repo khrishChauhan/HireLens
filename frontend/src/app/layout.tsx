@@ -12,13 +12,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-import { AppShell } from "@/components/layout/AppShell";
-
 export const metadata: Metadata = {
   title: "HireLens — Beyond Resumes. Proving Skills.",
   description:
-    "AI-powered recruitment and adaptive interview platform designed to evaluate skills through evidence and transparent scoring rubrics.",
+    "AI-powered recruitment intelligence and adaptive technical interview platform. Upload a resume, discover relevant roles, complete an adaptive interview, and receive an evidence-based evaluation.",
 };
+
+import { Providers } from "@/components/Providers";
 
 export default function RootLayout({
   children,
@@ -30,8 +30,8 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-white text-[#26212A] selection:bg-[#FFF0F5] selection:text-[#BE356D]">
-        <AppShell>{children}</AppShell>
+      <body className="min-h-full flex flex-col bg-white text-[#28232B] selection:bg-[#FFF0F5] selection:text-[#BE356D]">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

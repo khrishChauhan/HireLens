@@ -1,5 +1,8 @@
-from fastapi import FastAPI
+
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from pypdf import PdfReader
+from io import BytesIO
 
 app = FastAPI(
     title="HireLens API",
@@ -18,6 +21,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
+
 
 @app.get("/")
 def root():
@@ -33,3 +38,78 @@ def health_check():
         "status": "healthy",
         "service": "HireLens backend",
     }
+
+
+@app.post("/api/resumes/extract")
+async def extract_resume(file: UploadFile = File(...)):
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=400,
+            detail="Please upload a PDF resume.",
+        )
+
+    content = await file.read(MAX_FILE_SIZE + 1)
+
+    if len(content) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail="File is too large. Maximum size is 5 MB.",
+        )
+
+    if not content.startswith(b"%PDF-"):
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded file is not a valid PDF.",
+        )
+
+    try:
+        reader = PdfReader(BytesIO(content))
+
+        if reader.is_encrypted:
+            raise HTTPException(
+                status_code=400,
+                detail="Password-protected PDFs are not supported.",
+            )
+
+        if len(reader.pages) == 0:
+            raise HTTPException(
+                status_code=400,
+                detail="The PDF contains no pages.",
+            )
+
+        if len(reader.pages) > 30:
+            raise HTTPException(
+                status_code=400,
+                detail="The PDF cannot contain more than 30 pages.",
+            )
+
+        extracted_text = "\n".join(
+            page.extract_text() or "" for page in reader.pages
+        ).strip()
+
+        if not extracted_text:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "No readable text was found. "
+                    "Scanned PDFs require OCR, which is not implemented yet."
+                ),
+            )
+
+        return {
+            "filename": file.filename,
+            "page_count": len(reader.pages),
+            "character_count": len(extracted_text),
+            "text": extracted_text,
+            "status": "success",
+        }
+
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="Unable to read this PDF. Please try another file.",
+        )
+    finally:
+        await file.close()

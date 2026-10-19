@@ -1,0 +1,56 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1854 >>
+stream
+BT
+/F1 10 Tf
+/F1 16 Tf 50 750 Td (Alex Vance) Tj /F1 10 Tf
+50 732 Td (Senior Systems & Full-Stack Engineer | Seattle, WA | alex.vance@example.com) Tj
+/F1 11 Tf 50 696 Td (SUMMARY) Tj /F1 10 Tf
+50 678 Td (Full-Stack & Distributed Systems Engineer with 6+ years of experience architecting) Tj
+50 660 Td (high-throughput event processing pipelines, scalable microservices in Python \(FastAPI\),) Tj
+50 642 Td (and responsive, accessible React/TypeScript web applications.) Tj
+/F1 11 Tf 50 606 Td (CORE COMPETENCIES) Tj /F1 10 Tf
+50 588 Td (Languages: TypeScript, JavaScript, Python, Go, SQL) Tj
+50 570 Td (Frontend: React 19, Next.js \(App Router\), Tailwind CSS, Web Performance, WCAG AA) Tj
+50 552 Td (Backend: FastAPI, RESTful APIs, gRPC, PostgreSQL, Redis, Kafka, Distributed Systems, Docker) Tj
+50 534 Td (Practices: CI/CD, Idempotent API Design, Schema Migrations, Observability, Playwright) Tj
+/F1 11 Tf 50 498 Td (EXPERIENCE) Tj /F1 10 Tf
+50 480 Td (Apex Cloud Platforms - Senior Software Engineer \(2023 - Present\)) Tj
+50 462 Td (- Architected async data processing microservices in FastAPI handling 100,000+ events/sec.) Tj
+50 444 Td (- Redesigned client-facing analytics portal using Next.js, cutting p99 load times by 42%.) Tj
+50 426 Td (- Implemented distributed locking and Redis sliding-window deduping to guarantee idempotency.) Tj
+50 390 Td (Vanguard Systems - Full-Stack Developer \(2020 - 2023\)) Tj
+50 372 Td (- Led migration from monolithic server-rendered views to modern React/TypeScript components.) Tj
+50 354 Td (- Profiled PostgreSQL relational queries with EXPLAIN ANALYZE, eliminating index bloat.) Tj
+50 336 Td (- Established automated end-to-end testing pipeline with Playwright and GitHub Actions.) Tj
+/F1 11 Tf 50 300 Td (EDUCATION) Tj /F1 10 Tf
+50 282 Td (B.S. in Computer Science - University of Washington \(2020\)) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000234 00000 n 
+00000002154 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2234
+%%EOF
