@@ -11,20 +11,25 @@ import {
   AssessmentStage,
   ResumeData,
   InterviewAnswer,
+  RealResumeAnalysisResponse,
 } from '@/lib/assessment-types';
 
 export default function AssessmentWorkspacePage() {
   const [stage, setStage] = useState<AssessmentStage>('upload');
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
+  const [analysisResult, setAnalysisResult] =
+    useState<RealResumeAnalysisResponse | null>(null);
   const [answers, setAnswers] = useState<InterviewAnswer[]>([]);
 
   // Stage transitions
   const handleResumeSelected = (data: ResumeData) => {
     setResumeData(data);
+    setAnalysisResult(null);
   };
 
   const handleResumeRemoved = () => {
     setResumeData(null);
+    setAnalysisResult(null);
   };
 
   const handleStartAnalysis = () => {
@@ -36,6 +41,7 @@ export default function AssessmentWorkspacePage() {
   };
 
   const handleStartInterview = () => {
+    if (!analysisResult) return;
     setStage('interview');
   };
 
@@ -54,6 +60,7 @@ export default function AssessmentWorkspacePage() {
   const handleStartNewAssessment = () => {
     setStage('upload');
     setResumeData(null);
+    setAnalysisResult(null);
     setAnswers([]);
   };
 
@@ -79,6 +86,8 @@ export default function AssessmentWorkspacePage() {
         {(stage === 'analyzing' || stage === 'analysis') && (
           <StageAnalysis
             resumeData={resumeData}
+            analysisResult={analysisResult}
+            onAnalysisComplete={setAnalysisResult}
             onStartInterview={handleStartInterview}
             onBackToUpload={handleBackToUpload}
           />
@@ -96,6 +105,7 @@ export default function AssessmentWorkspacePage() {
         {stage === 'results' && (
           <StageResults
             resumeData={resumeData}
+            analysisResult={analysisResult}
             answers={answers}
             onStartNewAssessment={handleStartNewAssessment}
           />

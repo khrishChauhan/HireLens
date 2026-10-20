@@ -113,3 +113,41 @@ async def extract_resume(file: UploadFile = File(...)):
         )
     finally:
         await file.close()
+
+
+from schemas.analysis import ResumeAnalysisRequest, ResumeAnalysisResponse
+from services.analyzer import (
+    ResumeAnalyzer,
+    LLMConfigurationError,
+    LLMProviderError,
+)
+
+analyzer = ResumeAnalyzer()
+
+
+@app.post("/api/resumes/analyze", response_model=ResumeAnalysisResponse)
+async def analyze_resume(request: ResumeAnalysisRequest):
+    try:
+        result = await analyzer.analyze(
+            resume_text=request.resume_text,
+            job_description=request.job_description,
+        )
+        return result
+    except LLMConfigurationError as e:
+        raise HTTPException(
+            status_code=503,
+            detail=str(e),
+        )
+    except LLMProviderError as e:
+        raise HTTPException(
+            status_code=502,
+            detail=str(e),
+        )
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="An unexpected error occurred during resume analysis.",
+        )
+

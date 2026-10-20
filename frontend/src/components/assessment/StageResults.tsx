@@ -15,21 +15,29 @@ import {
   AssessmentResult,
   InterviewAnswer,
   ResumeData,
+  RealResumeAnalysisResponse,
 } from '@/lib/assessment-types';
 import { INITIAL_ASSESSMENT_RESULT } from '@/lib/assessment-data';
 
 interface StageResultsProps {
   resumeData?: ResumeData | null;
+  analysisResult?: RealResumeAnalysisResponse | null;
   answers: InterviewAnswer[];
   onStartNewAssessment: () => void;
 }
 
 export function StageResults({
+  analysisResult,
   answers,
   onStartNewAssessment,
 }: StageResultsProps) {
   const [downloadSuccess, setDownloadSuccess] = useState(false);
-  const result: AssessmentResult = INITIAL_ASSESSMENT_RESULT;
+  const baseResult: AssessmentResult = INITIAL_ASSESSMENT_RESULT;
+  const result: AssessmentResult = {
+    ...baseResult,
+    candidateName: analysisResult?.candidate_name || baseResult.candidateName,
+    matchedRole: analysisResult?.candidate_title || baseResult.matchedRole,
+  };
 
   // Build evidence findings using real submitted answers if present
   const evidenceList =

@@ -332,6 +332,7 @@ export function StageUpload({
         {!resumeData && (
           <div className="text-center pt-1 border-t border-[#EEE9EE]">
             <button
+              id="sample-resume-btn"
               type="button"
               disabled={isProcessing}
               onClick={handleUseSampleResume}
@@ -351,6 +352,7 @@ export function StageUpload({
         {/* Primary Action Button */}
         <div className="pt-2">
           <button
+            id="analyze-resume-btn"
             type="button"
             disabled={!resumeData || isProcessing}
             onClick={handleAnalyzeClick}

@@ -203,3 +203,57 @@ export const INITIAL_ASSESSMENT_RESULT: AssessmentResult = {
     },
   ],
 };
+
+export interface TargetRolePreset {
+  id: string;
+  title: string;
+  department: string;
+  description: string;
+}
+
+export const TARGET_ROLE_PRESETS: TargetRolePreset[] = [
+  {
+    id: 'fullstack-senior',
+    title: 'Senior Full-Stack & Distributed Systems Engineer',
+    department: 'Core Infrastructure',
+    description: `We are seeking a Senior Full-Stack & Distributed Systems Engineer to design, scale, and maintain our high-throughput data processing platforms.
+
+Key Requirements:
+- 5+ years of production experience with Python (FastAPI or asynchronous frameworks)
+- Demonstrated expertise in modern React, TypeScript, and state management
+- Deep understanding of distributed caching, event pipelines, and Redis or Kafka
+- Production experience with PostgreSQL schema design, query tuning, and index optimization
+- Hands-on experience with Docker containerization and CI/CD automation pipelines
+- Proven ability to design idempotent, backwards-compatible REST and gRPC API contracts
+- Preferred: Experience with Kubernetes cluster orchestration and observability tools`,
+  },
+  {
+    id: 'frontend-staff',
+    title: 'Staff Frontend Engineer (React & TypeScript)',
+    department: 'Client Platform',
+    description: `We are looking for a Staff Frontend Engineer to lead frontend architecture and developer experience.
+
+Key Requirements:
+- 6+ years building enterprise React web applications with strict TypeScript
+- Deep mastery of Next.js App Router, server/client component boundaries, and performance optimization
+- Proven track record crafting accessible, reusable design systems (WCAG 2.1 AA compliant)
+- Experience optimizing Core Web Vitals, minimizing main-thread execution time, and client-side memory management
+- Solid automated testing experience with Playwright and Vitest/Jest
+- Experience interfacing with Python/FastAPI backend APIs and streaming protocols`,
+  },
+  {
+    id: 'backend-infra',
+    title: 'Backend Infrastructure & API Engineer (Python / FastAPI)',
+    department: 'Platform Engineering',
+    description: `We are seeking a Backend Infrastructure Engineer to scale our core microservices and API gateways.
+
+Key Requirements:
+- 5+ years building scalable, fault-tolerant backend microservices in Python
+- Advanced knowledge of FastAPI, asynchronous concurrency, and connection pooling
+- Strong relational database experience with PostgreSQL and Alembic schema migrations
+- Hands-on expertise with distributed locking, idempotency keys, and Redis rate limiting
+- Experience containerizing microservices with Docker and managing automated deployment pipelines
+- Track record of API performance profiling, p99 latency reduction, and observability`,
+  },
+];
+
