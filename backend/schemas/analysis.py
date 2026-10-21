@@ -76,6 +76,14 @@ class RequirementMatch(BaseModel):
         default=False,
         description="True if this finding relies on reasonable inference rather than an explicit mention",
     )
+    evidence_verified: Optional[bool] = Field(
+        default=None,
+        description="True if cited evidence quote was verified verbatim in original resume text, False if unverified",
+    )
+    relevant_chunk_indices: List[int] = Field(
+        default_factory=list,
+        description="Indices of retrieved resume chunks relevant to this requirement",
+    )
 
 
 class LLMAnalysisOutput(BaseModel):
@@ -133,6 +141,17 @@ class ScoringBreakdown(BaseModel):
     limitations: str
 
 
+class RetrievalMetadata(BaseModel):
+    """Metadata regarding RAG chunking, vector retrieval, and evidence verification."""
+    total_chunks: int = Field(description="Total chunks generated from the resume")
+    chunk_size: int = Field(description="Configured character size per chunk")
+    chunk_overlap: int = Field(description="Configured character overlap between chunks")
+    embedding_model: str = Field(description="Embedding model used for semantic search")
+    verified_quotes_count: int = Field(description="Number of quotes verified verbatim in source text")
+    unverified_quotes_count: int = Field(description="Number of quotes that could not be verified")
+    retrieval_strategy: str = Field(description="Description of retrieval and verification strategy")
+
+
 class ResumeAnalysisResponse(BaseModel):
     """Final validated response returned by the API endpoint."""
     candidate_name: str
@@ -156,4 +175,8 @@ class ResumeAnalysisResponse(BaseModel):
     
     # Missing information and uncertainties
     uncertainty_notes: List[str]
+    retrieval_metadata: Optional[RetrievalMetadata] = Field(
+        default=None,
+        description="RAG retrieval and evidence verification metrics",
+    )
     status: Literal["success"] = "success"

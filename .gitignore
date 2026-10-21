@@ -31,7 +31,10 @@ npm-debug.log*
 # Local uploads and generated data
 uploads/
 data/
+backend/data/
+*.sqlite
 *.sqlite3
+*.db
 
 # IDE and operating system
 .vscode/*

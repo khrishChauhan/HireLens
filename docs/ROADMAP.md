@@ -17,40 +17,48 @@
 - [x] Connect frontend to backend.
 - [x] Verify both applications run locally.
 
-## Phase 3: Database and Authentication
-- [ ] Design PostgreSQL schema.
-- [ ] Configure authentication.
-- [ ] Implement recruiter and candidate roles.
-- [ ] Enforce access controls.
+## Phase 3: Database and Persistence (SQLite Session Engine)
+- [x] Design and implement SQLite database schema with SQLAlchemy 2.x.
+- [x] Dedicated backend data directory excluded from Git (`backend/data/`).
+- [x] Tables for assessment sessions, resume analysis, questions, answers, and reports.
+- [x] REST API endpoints for session creation, progress updates, and recovery.
+- [x] Client session identifier and refresh restoration across all assessment stages.
+- [x] Idempotent answer updates preventing duplicate submissions.
+- [ ] Multi-tenant PostgreSQL and user authentication (future phase).
 
-## Phase 4: Job Profiles and Resume Processing
-- [ ] Create and manage job descriptions.
-- [ ] Implement secure PDF upload.
-- [ ] Extract resume text.
-- [ ] Produce structured candidate profiles.
-- [ ] Preserve source evidence.
+## Phase 4: Job Profiles, Resume Processing & RAG
+- [x] Create and manage job descriptions.
+- [x] Implement secure PDF upload with 5MB cap & magic-byte validation.
+- [x] Extract resume text using pypdf.
+- [x] Produce structured candidate profiles via Groq LPU inference.
+- [x] Preserve source evidence and direct quotes.
+- [x] Implement local RAG text chunking (configurable chunk_size & overlap).
+- [x] Implement dense embeddings via FastEmbed (BAAI/bge-small-en-v1.5).
+- [x] In-memory cosine similarity vector index with per-candidate isolation.
+- [x] Programmatic quote verification against source resume text.
 
 ## Phase 5: Candidate Matching
-- [ ] Define evaluation rubrics.
-- [ ] Compare candidate evidence with job requirements.
-- [ ] Generate explainable match reports.
+- [x] Define evaluation rubrics with transparent scoring breakdown.
+- [x] Compare candidate evidence with job requirements.
+- [x] Generate explainable match reports with deterministic scoring.
 - [ ] Establish a baseline evaluation dataset.
 
 ## Phase 6: Personalized Interview Planning
-- [ ] Generate job-specific questions.
-- [ ] Generate project-specific questions.
-- [ ] Define question-level evaluation criteria.
-- [ ] Validate question quality.
+- [x] Generate job-specific questions prioritizing resume gaps.
+- [x] Generate project-specific questions based on candidate evidence.
+- [x] Define question-level evaluation criteria and rubrics.
+- [x] Validate question quality via Groq JSON Schema mode.
 
 ## Phase 7: Adaptive AI Interview
-- [ ] Implement interview session state.
-- [ ] Evaluate candidate answers against rubrics.
-- [ ] Generate adaptive follow-up questions.
-- [ ] Persist answers and evaluation evidence.
+- [x] Implement interview session state and bounded question budget.
+- [x] Evaluate candidate answers against 4-criterion rubrics.
+- [x] Generate adaptive follow-up questions for ambiguous responses.
+- [x] Validate cited evidence quotations against submitted answer text.
+- [x] Present dual scores (Resume Alignment vs Interview Performance).
 - [ ] Add voice interaction.
 
 ## Phase 8: Advanced AI Architecture
-- [ ] Implement RAG and retrieval evaluation.
+- [x] Implement RAG and retrieval evaluation (FastEmbed, in-memory cosine index, quote verification).
 - [ ] Add workflow orchestration with LangGraph.
 - [ ] Add an MCP server and authorized tools.
 - [ ] Add validation, retries, and failure handling.

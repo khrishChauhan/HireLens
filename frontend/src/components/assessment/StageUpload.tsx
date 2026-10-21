@@ -169,7 +169,7 @@ export function StageUpload({
 
     try {
       // Send actual file via FormData to FastAPI
-      const result = await extractResume(resumeData.file);
+      const result = await extractResume(resumeData.file, resumeData.sessionId);
 
       // Store extraction response in assessment state
       const updatedData: ResumeData = {
@@ -178,6 +178,7 @@ export function StageUpload({
         extractedText: result.text,
         pageCount: result.page_count,
         characterCount: result.character_count,
+        sessionId: result.session_id,
         isExtracted: true,
       };
 

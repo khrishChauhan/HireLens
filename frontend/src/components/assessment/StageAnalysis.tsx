@@ -398,6 +398,15 @@ export function StageAnalysis({
                 <h3 className="text-lg sm:text-xl font-bold text-[#28232B] mt-1">
                   Validated Overlap Against Target Role
                 </h3>
+                {analysisResult.retrieval_metadata && (
+                  <div className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] font-medium text-[#716A75]">
+                    <Sparkles className="h-3 w-3 text-[#D94683]" />
+                    <span>
+                      RAG Retrieval: {analysisResult.retrieval_metadata.total_chunks} chunks indexed •{' '}
+                      <strong className="text-[#23845B]">{analysisResult.retrieval_metadata.verified_quotes_count}</strong> verified quotes
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-2.5 self-start sm:self-auto rounded-xl bg-white border border-[#F2D5E1] px-4 py-2.5 text-right shadow-2xs">
@@ -562,9 +571,30 @@ export function StageAnalysis({
 
                   {/* Direct Quote Evidence */}
                   {req.evidence && (
-                    <div className="flex items-start gap-2 rounded-lg bg-white border border-[#EEE9EE] p-2.5 text-xs italic text-[#716A75]">
-                      <Quote className="h-3.5 w-3.5 shrink-0 text-[#D94683] mt-0.5" />
-                      <span>&ldquo;{req.evidence}&rdquo;</span>
+                    <div className="space-y-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-lg bg-white border border-[#EEE9EE] p-2.5 text-xs text-[#716A75]">
+                        <div className="flex items-start gap-2 italic">
+                          <Quote className="h-3.5 w-3.5 shrink-0 text-[#D94683] mt-0.5" />
+                          <span>&ldquo;{req.evidence}&rdquo;</span>
+                        </div>
+                        {req.evidence_verified === true && (
+                          <span className="shrink-0 inline-flex items-center gap-1 rounded bg-[#EBF6F1] px-2 py-0.5 text-[10px] font-semibold text-[#23845B] border border-[#C6E7D7]">
+                            <Check className="h-3 w-3" />
+                            <span>Verified Source Quote</span>
+                          </span>
+                        )}
+                        {req.evidence_verified === false && (
+                          <span className="shrink-0 inline-flex items-center gap-1 rounded bg-[#FEF9ED] px-2 py-0.5 text-[10px] font-semibold text-[#B7791F] border border-[#F7E0B5]">
+                            <AlertCircle className="h-3 w-3" />
+                            <span>Unverified Quote</span>
+                          </span>
+                        )}
+                      </div>
+                      {req.relevant_chunk_indices && req.relevant_chunk_indices.length > 0 && (
+                        <div className="text-[10px] text-[#99919C] font-mono px-1">
+                          Semantic RAG Match: Resume Chunk #{req.relevant_chunk_indices.join(', #')}
+                        </div>
+                      )}
                     </div>
                   )}
 

@@ -9,6 +9,7 @@ export interface ResumeData {
   pageCount?: number;
   characterCount?: number;
   isExtracted?: boolean;
+  sessionId?: string;
 }
 
 export interface ExperienceHighlight {
@@ -49,6 +50,8 @@ export interface RequirementMatchItem {
   evidence?: string | null;
   explanation: string;
   is_inferred: boolean;
+  evidence_verified?: boolean | null;
+  relevant_chunk_indices?: number[];
 }
 
 export interface ScoringBreakdown {
@@ -61,6 +64,16 @@ export interface ScoringBreakdown {
   percentage: number;
   formula: string;
   limitations: string;
+}
+
+export interface RetrievalMetadata {
+  total_chunks: number;
+  chunk_size: number;
+  chunk_overlap: number;
+  embedding_model: string;
+  verified_quotes_count: number;
+  unverified_quotes_count: number;
+  retrieval_strategy: string;
 }
 
 export interface RealResumeAnalysisResponse {
@@ -79,6 +92,7 @@ export interface RealResumeAnalysisResponse {
   match_score: number;
   scoring_breakdown: ScoringBreakdown;
   uncertainty_notes: string[];
+  retrieval_metadata?: RetrievalMetadata | null;
   status: 'success';
 }
 
@@ -95,8 +109,53 @@ export interface ResumeAnalysis {
   matchRationale: string;
 }
 
+export interface AdaptiveQuestion {
+  id: string;
+  question: string;
+  target_skill: string;
+  reason: string;
+  difficulty: 'foundational' | 'intermediate' | 'advanced';
+  rubric: string;
+  is_follow_up: boolean;
+}
+
+export interface CriterionScore {
+  criterion: 'technical_correctness' | 'problem_solving' | 'relevance' | 'communication';
+  score: number;
+  feedback: string;
+}
+
+export interface AnswerEvaluationResponse {
+  question_id: string;
+  composite_score: number;
+  percentage_score: number;
+  criteria_scores: CriterionScore[];
+  evidence_quote?: string | null;
+  evidence_verified: boolean;
+  strengths: string[];
+  improvements: string[];
+  overall_feedback: string;
+  status: 'success';
+}
+
+export interface NextQuestionResponse {
+  has_next_question: boolean;
+  is_completed: boolean;
+  next_question?: AdaptiveQuestion | null;
+  decision_reason: string;
+  remaining_budget: number;
+  status: 'success';
+}
+
+export interface EvaluatedAnswerRecord {
+  question: AdaptiveQuestion;
+  answerText: string;
+  evaluation: AnswerEvaluationResponse;
+  timestamp: string;
+}
+
 export interface InterviewQuestion {
-  id: number;
+  id: number | string;
   topic: string;
   question: string;
   context: string;
@@ -104,7 +163,7 @@ export interface InterviewQuestion {
 }
 
 export interface InterviewAnswer {
-  questionId: number;
+  questionId: number | string;
   questionText: string;
   topic: string;
   answerText: string;
@@ -142,4 +201,35 @@ export interface AssessmentResult {
   areasToImprove: string[];
   evidenceFindings: EvidenceFinding[];
   recommendedLearning: RecommendedStudy[];
+}
+
+export interface SessionFinalReport {
+  resume_match_score: number;
+  interview_composite_score: number;
+  interview_percentage_score: number;
+  report_markdown: string;
+  created_at: string;
+}
+
+export interface SessionDetailResponse {
+  session_id: string;
+  status: string;
+  stage: AssessmentStage;
+  candidate_name?: string | null;
+  candidate_title?: string | null;
+  resume_data?: {
+    name: string;
+    extractedText: string;
+    pageCount: number;
+    characterCount: number;
+    isExtracted: boolean;
+  } | null;
+  job_description?: string | null;
+  analysis_result?: RealResumeAnalysisResponse | null;
+  questions: AdaptiveQuestion[];
+  evaluated_answers: EvaluatedAnswerRecord[];
+  final_report?: SessionFinalReport | null;
+  created_at: string;
+  updated_at: string;
+  api_status: 'success';
 }
