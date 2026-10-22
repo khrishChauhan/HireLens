@@ -48,6 +48,22 @@ class TestCorsOriginParsing:
         # Falls back to default safe origins
         assert origins == DEFAULT_ALLOWED_ORIGINS
 
+    def test_strips_trailing_slashes_from_origins(self):
+        raw = "https://hire-sliant-six.vercel.app/, https://example.com///"
+        origins = parse_allowed_origins(raw)
+        assert origins == [
+            "https://hire-sliant-six.vercel.app",
+            "https://example.com",
+        ]
+
+    def test_strips_surrounding_quotes_from_origins(self):
+        raw = '"https://hire-sliant-six.vercel.app/", \'https://another.com\''
+        origins = parse_allowed_origins(raw)
+        assert origins == [
+            "https://hire-sliant-six.vercel.app",
+            "https://another.com",
+        ]
+
     def test_strips_wildcard_from_mixed_origins(self):
         raw = "https://valid-domain.com, *, https://another-valid.com"
         origins = parse_allowed_origins(raw)
@@ -56,35 +72,106 @@ class TestCorsOriginParsing:
 
 
 class TestCorsMiddlewareIntegration:
-    """Integration tests verifying CORS headers on HTTP responses."""
+    """Integration tests verifying CORS headers on HTTP responses for the demo configuration."""
 
-    def test_cors_preflight_allowed_origin(self):
+    def test_demo_cors_preflight_from_deployed_vercel_origin(self):
+        """Preflight OPTIONS from the deployed Vercel domain must succeed with 200 OK and wildcard ACAO."""
         response = client.options(
             "/health",
             headers={
-                "Origin": "http://localhost:3000",
+                "Origin": "https://hire-sliant-six.vercel.app",
                 "Access-Control-Request-Method": "GET",
             },
         )
-        assert response.headers.get("access-control-allow-origin") == "http://localhost:3000"
-        assert response.headers.get("access-control-allow-credentials") == "true"
+        assert response.status_code == 200
+        assert response.headers.get("access-control-allow-origin") == "*"
+        assert response.headers.get("access-control-allow-credentials") is None
+        assert "GET" in response.headers.get("access-control-allow-methods", "")
 
-    def test_cors_get_allowed_origin(self):
+    def test_demo_cors_preflight_post_api_request_from_deployed_vercel_origin(self):
+        """Preflight OPTIONS for POST API endpoints must succeed with 200 OK."""
+        response = client.options(
+            "/api/resumes/extract",
+            headers={
+                "Origin": "https://hire-sliant-six.vercel.app",
+                "Access-Control-Request-Method": "POST",
+            },
+        )
+        assert response.status_code == 200
+        assert response.headers.get("access-control-allow-origin") == "*"
+        assert "POST" in response.headers.get("access-control-allow-methods", "")
+
+    def test_demo_cors_get_health_from_deployed_vercel_origin(self):
+        """GET /health from deployed Vercel domain must succeed and include wildcard ACAO."""
+        response = client.get(
+            "/health",
+            headers={"Origin": "https://hire-sliant-six.vercel.app"},
+        )
+        assert response.status_code == 200
+        assert response.headers.get("access-control-allow-origin") == "*"
+        assert response.json()["status"] == "healthy"
+
+    def test_demo_cors_post_api_request_from_deployed_vercel_origin(self):
+        """POST /api/resumes/extract response must include wildcard ACAO."""
+        response = client.post(
+            "/api/resumes/extract",
+            headers={"Origin": "https://hire-sliant-six.vercel.app"},
+        )
+        # 422 Unprocessable Entity expected due to missing multipart file payload,
+        # but CORS headers must be attached by the middleware
+        assert response.status_code == 422
+        assert response.headers.get("access-control-allow-origin") == "*"
+
+    def test_demo_cors_get_from_localhost_origin(self):
+        """Localhost development frontend continues to work with wildcard ACAO."""
         response = client.get(
             "/health",
             headers={"Origin": "http://localhost:3000"},
         )
         assert response.status_code == 200
-        assert response.headers.get("access-control-allow-origin") == "http://localhost:3000"
+        assert response.headers.get("access-control-allow-origin") == "*"
 
-    def test_cors_disallowed_origin(self):
-        response = client.get(
+    def test_demo_cors_allows_arbitrary_vercel_preview_origin(self):
+        """Vercel branch/preview deployments work out-of-the-box without preflight 400 rejection."""
+        response = client.options(
             "/health",
-            headers={"Origin": "https://malicious-unauthorized-site.com"},
+            headers={
+                "Origin": "https://hirelens-preview-abc123.vercel.app",
+                "Access-Control-Request-Method": "GET",
+            },
         )
         assert response.status_code == 200
-        # Disallowed origin must not receive Access-Control-Allow-Origin matching the malicious site
-        assert response.headers.get("access-control-allow-origin") != "https://malicious-unauthorized-site.com"
+        assert response.headers.get("access-control-allow-origin") == "*"
+
+    def test_production_cors_preflight_origin_configured_with_trailing_slash(self):
+        """Unit test confirming parse_allowed_origins normalizes trailing slashes for future production use."""
+        from fastapi import FastAPI
+        from fastapi.middleware.cors import CORSMiddleware
+
+        prod_app = FastAPI()
+        prod_origins = parse_allowed_origins("https://hire-sliant-six.vercel.app/")
+        prod_app.add_middleware(
+            CORSMiddleware,
+            allow_origins=prod_origins,
+            allow_credentials=False,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+
+        @prod_app.get("/health")
+        def health():
+            return {"status": "healthy"}
+
+        c = TestClient(prod_app)
+        response = c.options(
+            "/health",
+            headers={
+                "Origin": "https://hire-sliant-six.vercel.app",
+                "Access-Control-Request-Method": "GET",
+            },
+        )
+        assert response.status_code == 200
+        assert response.headers.get("access-control-allow-origin") == "https://hire-sliant-six.vercel.app"
 
 
 class TestDatabaseUrlParsing:

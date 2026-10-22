@@ -20,10 +20,18 @@ describe('HireLens Backend Health Check Tests', () => {
     globalThis.fetch = originalFetch;
   });
 
-  it('should verify API_BASE_URL is defined and defaults safely', () => {
+  it('should verify API_BASE_URL is defined and defaults safely without trailing slash', () => {
     assert.ok(API_BASE_URL);
     assert.ok(typeof API_BASE_URL === 'string');
     assert.ok(API_BASE_URL.startsWith('http'));
+    assert.ok(!API_BASE_URL.endsWith('/'), 'API_BASE_URL must not contain trailing slashes');
+  });
+
+  it('should ensure endpoint paths do not contain double slashes', () => {
+    const healthUrl = `${API_BASE_URL}/health`;
+    assert.ok(!healthUrl.includes('//health'), 'Health URL must not contain double slashes');
+    const extractUrl = `${API_BASE_URL}/api/resumes/extract`;
+    assert.ok(!extractUrl.includes('//api/'), 'Extract URL must not contain double slashes');
   });
 
   it('should return service and status on successful 200 response', async () => {

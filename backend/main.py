@@ -39,7 +39,11 @@ def parse_allowed_origins(origins_str: Optional[str] = None) -> List[str]:
     if not origins_str or not origins_str.strip():
         return list(DEFAULT_ALLOWED_ORIGINS)
 
-    parsed = [o.strip() for o in origins_str.split(",") if o.strip()]
+    parsed = [
+        o.strip().strip("\"'").rstrip("/")
+        for o in origins_str.split(",")
+        if o.strip().strip("\"'").rstrip("/")
+    ]
     # Security requirement: Never allow wildcard '*' with allow_credentials=True
     sanitized = [o for o in parsed if o != "*"]
 
@@ -63,12 +67,16 @@ app = FastAPI(
     version="0.1.0",
 )
 
-allowed_origins = parse_allowed_origins(os.getenv("ALLOWED_ORIGINS"))
-
+# TEMPORARY DEMO CONFIGURATION:
+# Permissive CORS allowing all origins for the public portfolio demo deployment.
+# allow_credentials=False is used because the frontend does not use cross-origin cookies or HTTP auth,
+# which adheres to the W3C CORS specification for wildcard allow_origins=["*"].
+# IMPORTANT: Before any production use or introducing authentication cookies,
+# CORS must be restricted to explicit trusted frontend origins.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
