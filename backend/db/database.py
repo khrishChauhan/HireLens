@@ -1,15 +1,37 @@
 import os
 from pathlib import Path
-from typing import Generator
+from typing import Generator, Optional
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, Session
 
 # Determine database directory: default to backend/data/
 DEFAULT_DATA_DIR = Path(__file__).parent.parent / "data"
-DEFAULT_DATA_DIR.mkdir(parents=True, exist_ok=True)
-
 DEFAULT_DB_FILE = DEFAULT_DATA_DIR / "hirelens.db"
-DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DEFAULT_DB_FILE}")
+
+
+def parse_database_url(raw_url: Optional[str] = None) -> str:
+    """
+    Parses and normalizes the database connection URL.
+    Defaults to local SQLite at backend/data/hirelens.db if not configured.
+    Normalizes legacy 'postgres://' prefixes to 'postgresql://' for SQLAlchemy 2.0.
+    Ensures the SQLite directory exists only when using SQLite storage.
+    """
+    if not raw_url or not raw_url.strip():
+        DEFAULT_DATA_DIR.mkdir(parents=True, exist_ok=True)
+        return f"sqlite:///{DEFAULT_DB_FILE}"
+
+    url = raw_url.strip()
+    # Normalize legacy postgres:// prefix from cloud providers (Render, Heroku, Supabase)
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+
+    if url.startswith("sqlite"):
+        DEFAULT_DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    return url
+
+
+DATABASE_URL = parse_database_url(os.getenv("DATABASE_URL"))
 
 # SQLite specific connect args for multi-threaded FastAPI workers
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}

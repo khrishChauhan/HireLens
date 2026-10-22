@@ -88,6 +88,13 @@ class FastEmbedEmbeddingService(BaseEmbeddingService):
                 f"Ensure fastembed and onnxruntime are installed. Details: {e}"
             ) from e
 
+    def warmup(self) -> None:
+        """
+        Pre-downloads and initializes the embedding model to eliminate cold-start latency.
+        Safe to call during container/image build steps or server startup.
+        """
+        self._get_model()
+
     def embed_texts(self, texts: List[str]) -> np.ndarray:
         if not texts:
             return np.empty((0, self.dimension), dtype=np.float32)
@@ -159,3 +166,16 @@ class MockEmbeddingService(BaseEmbeddingService):
             embeddings.append(vec)
 
         return np.array(embeddings, dtype=np.float32)
+
+
+if __name__ == "__main__":
+    import sys
+
+    print("Pre-caching FastEmbed model...")
+    try:
+        service = FastEmbedEmbeddingService()
+        service.warmup()
+        print("FastEmbed model pre-cached successfully.")
+    except Exception as exc:
+        print(f"Failed to pre-cache FastEmbed model: {exc}", file=sys.stderr)
+        sys.exit(1)

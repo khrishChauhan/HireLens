@@ -2,7 +2,7 @@
  * Centralized API client service for HireLens backend communication.
  */
 
-import {
+import type {
   AdaptiveQuestion,
   AnswerEvaluationResponse,
   AssessmentStage,
@@ -106,7 +106,10 @@ export async function checkBackendHealth(): Promise<{ status: string; service: s
       throw new Error(`Health check failed with status ${response.status}`);
     }
     return (await response.json()) as { status: string; service: string };
-  } catch {
+  } catch (err) {
+    if (err instanceof Error && err.message.startsWith('Health check failed')) {
+      throw err;
+    }
     throw new Error('Backend is currently offline or unreachable.');
   }
 }
@@ -509,5 +512,6 @@ export async function createRealtimeInterviewSession(
 
   return response.json() as Promise<RealtimeSessionApiResponse>;
 }
+
 
 

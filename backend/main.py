@@ -1,8 +1,11 @@
+import logging
+import os
+from io import BytesIO
+from typing import List, Optional
+
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pypdf import PdfReader
-from io import BytesIO
-from typing import Optional
 from sqlalchemy.orm import Session
 
 from db.database import get_db, init_db
@@ -19,6 +22,38 @@ from schemas.session import (
 )
 from services.session import SessionNotFoundError, SessionService
 
+logger = logging.getLogger("hirelens.main")
+
+DEFAULT_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+
+def parse_allowed_origins(origins_str: Optional[str] = None) -> List[str]:
+    """
+    Parses a comma-separated string of allowed CORS origins.
+    Preserves default localhost origins if no input or empty input is provided.
+    Rejects and strips wildcard '*' when credentials are enabled to prevent CORS security violations.
+    """
+    if not origins_str or not origins_str.strip():
+        return list(DEFAULT_ALLOWED_ORIGINS)
+
+    parsed = [o.strip() for o in origins_str.split(",") if o.strip()]
+    # Security requirement: Never allow wildcard '*' with allow_credentials=True
+    sanitized = [o for o in parsed if o != "*"]
+
+    # If all provided origins were invalid or wildcard, fallback to defaults
+    if not sanitized:
+        logger.warning(
+            "ALLOWED_ORIGINS contained only wildcard or invalid entries; "
+            "falling back to default localhost origins for security."
+        )
+        return list(DEFAULT_ALLOWED_ORIGINS)
+
+    return sanitized
+
+
 # Initialize SQLite database schema
 init_db()
 
@@ -28,12 +63,11 @@ app = FastAPI(
     version="0.1.0",
 )
 
+allowed_origins = parse_allowed_origins(os.getenv("ALLOWED_ORIGINS"))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -415,4 +449,12 @@ def complete_assessment_session(
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to complete session: {str(e)}")
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    server_port = int(os.getenv("PORT", "8000"))
+    logger.info("Starting HireLens backend in production mode on 0.0.0.0:%d (workers=1)", server_port)
+    uvicorn.run("main:app", host="0.0.0.0", port=server_port, reload=False, workers=1)
 

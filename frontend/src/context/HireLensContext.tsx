@@ -22,6 +22,7 @@ import {
   INITIAL_ACTIVITIES,
   INITIAL_NOTIFICATIONS,
 } from '@/lib/mock-data';
+import { checkBackendHealth } from '@/lib/api';
 
 interface Toast {
   id: string;
@@ -123,17 +124,9 @@ export function HireLensProvider({ children }: { children: React.ReactNode }) {
   const checkBackendConnection = useCallback(async () => {
     setBackendStatus('checking');
     try {
-      const response = await fetch('http://127.0.0.1:8000/health', {
-        headers: { Accept: 'application/json' },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setBackendStatus('connected');
-        setBackendMessage(`${data.service || 'FastAPI Backend'} online (200 OK)`);
-      } else {
-        setBackendStatus('disconnected');
-        setBackendMessage('Backend returned non-200 response');
-      }
+      const data = await checkBackendHealth();
+      setBackendStatus('connected');
+      setBackendMessage(`${data.service || 'FastAPI Backend'} online (200 OK)`);
     } catch {
       setBackendStatus('disconnected');
       setBackendMessage('Backend offline — relying on local demo data');
@@ -142,19 +135,11 @@ export function HireLensProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let ignore = false;
-    fetch('http://127.0.0.1:8000/health', {
-      headers: { Accept: 'application/json' },
-    })
-      .then(async (res) => {
+    checkBackendHealth()
+      .then((data) => {
         if (ignore) return;
-        if (res.ok) {
-          const data = await res.json();
-          setBackendStatus('connected');
-          setBackendMessage(`${data.service || 'FastAPI Backend'} online (200 OK)`);
-        } else {
-          setBackendStatus('disconnected');
-          setBackendMessage('Backend returned non-200 response');
-        }
+        setBackendStatus('connected');
+        setBackendMessage(`${data.service || 'FastAPI Backend'} online (200 OK)`);
       })
       .catch(() => {
         if (!ignore) {

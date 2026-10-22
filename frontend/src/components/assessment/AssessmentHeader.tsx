@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { HelpCircle, X, ShieldCheck } from 'lucide-react';
-import { API_BASE_URL } from '@/lib/api';
+import { checkBackendHealth } from '@/lib/api';
 
 export function AssessmentHeader() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -10,14 +10,9 @@ export function AssessmentHeader() {
 
   useEffect(() => {
     let ignore = false;
-    fetch(`${API_BASE_URL}/health`, {
-      headers: { Accept: 'application/json' },
-    })
-      .then((res) => {
-        if (!ignore) {
-          if (res.ok) setBackendStatus('connected');
-          else setBackendStatus('disconnected');
-        }
+    checkBackendHealth()
+      .then(() => {
+        if (!ignore) setBackendStatus('connected');
       })
       .catch(() => {
         if (!ignore) setBackendStatus('disconnected');
