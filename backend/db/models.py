@@ -120,6 +120,8 @@ class InterviewQuestionModel(Base):
     is_follow_up = Column(Boolean, default=False, nullable=False)
     parent_question_id = Column(String(64), nullable=True)
     order_index = Column(Integer, default=0, nullable=False)
+    stage = Column(String(32), default="technical_depth", nullable=True)
+    acknowledgement = Column(String(255), nullable=True)
 
     created_at = Column(DateTime, default=utc_now, nullable=False)
 

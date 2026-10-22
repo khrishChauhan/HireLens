@@ -1,32 +1,32 @@
-# HireLens — Adaptive Technical Interview Engine & Architecture Report
+# HireLens — Progressive Conversational Technical Interview Architecture
 
-> **Phase 5 Implementation:** Complete  
-> **Status:** Live & Production-Ready  
-> **Backend Service:** `InterviewService` ([`backend/services/interview.py`](file:///k:/code/HireLens/backend/services/interview.py))  
-> **AI Provider:** Groq Cloud LPU (`openai/gpt-oss-120b`) with JSON Schema Structured Outputs  
-> **Scoring Engine:** Deterministic Python 4-Criterion Mean with Verbatim Evidence Quote Verification
+> **Status:** Upgraded to Agentic AI Decision System (Tools: `search_resume_evidence`, `get_interview_evidence`, `plan_next_interview_action`)  
+> **Architecture Guide:** See [`docs/AGENT_ARCHITECTURE.md`](file:///k:/code/HireLens/docs/AGENT_ARCHITECTURE.md)  
+> **Backend Service:** `InterviewService` ([`backend/services/interview.py`](file:///k:/code/HireLens/backend/services/interview.py)) & `AgentToolRegistry` ([`backend/services/agent_tools.py`](file:///k:/code/HireLens/backend/services/agent_tools.py))  
+> **AI Provider:** Groq Cloud LPU (`openai/gpt-oss-120b`) with Tool Calling & JSON Schema Structured Fallback  
+> **Scoring Engine:** Deterministic Python 4-Criterion Mean with Verbatim Evidence Quote Verification  
+> **Persistence:** SQLite SQLAlchemy 2.x Session Architecture
 
 ---
 
 ## 1. Overview & Concept
 
-In traditional technical hiring, interviews often rely on static, one-size-fits-all question sets or uncalibrated human interviewer variance.
+In traditional technical hiring, interviews often feel like cold, rigid exams rather than realistic engineering discussions.
 
-The **HireLens Adaptive Technical Interview Engine** transforms this by:
-1. **Dynamic Question Formulation (`POST /api/interviews/generate-questions`):**  
-   Reads the candidate's Stage 2 RAG resume analysis (specifically targeting `partially_matched_requirements`, `unmatched_requirements`, and `uncertainty_notes`) to synthesize realistic, scenario-based questions probing identified competency gaps.
-2. **Objective 4-Criterion Answer Evaluation (`POST /api/interviews/evaluate`):**  
-   Evaluates technical responses against the specific question's rubric across 4 discrete dimensions on a 1.0–5.0 scale:
-   - Technical Correctness
-   - Problem-Solving & Reasoning
-   - Relevance to the Scenario
-   - Communication & Clarity
-3. **Deterministic Python Scoring:**  
-   Computes the composite score via pure arithmetic mean, eliminating arbitrary percentage hallucinations by the LLM.
-4. **Verbatim Evidence Verification:**  
-   Programmatically checks whether quotes cited by the model actually occur in the candidate's answer, flagging unverified citations.
-5. **Adaptive Next-Question Routing (`POST /api/interviews/next-question`):**  
-   If an answer reveals architectural ambiguity or hand-waving (composite score $\le 2.8$), the engine routes a targeted follow-up question. If the candidate demonstrates clear mastery, it transitions to an unaddressed requirement while strictly enforcing a hard question budget (max 4 questions).
+The **HireLens Progressive Conversational Technical Interview Engine** restructures the interaction into a realistic 6-stage human software engineering conversation:
+
+1. **Stage A — Introduction & Warm-Up:**  
+   Begins with an easy, welcoming, open-ended question about the candidate's engineering background and recent work (foundational difficulty).
+2. **Stage B — Project Overview:**  
+   Explores the candidate's most relevant software project in their own words—focusing on the core problem solved, architecture, and individual role (foundational difficulty).
+3. **Stage C — Project Deep Dive:**  
+   Extracts concrete technologies and architectural components mentioned in the candidate's own project response (e.g., RAG, SQLite, Kafka, Redis, FastAPI). Asks focused follow-ups exploring why they chose that approach and their specific implementation role before probing low-level details.
+4. **Stage D — Topic Transition:**  
+   Acknowledges the candidate's answer naturally (*"That makes sense."*, *"Got it."*) and transitions smoothly to unaddressed role requirements from the job description.
+5. **Stage E — Technical Depth:**  
+   Dynamically calibrates technical depth: explores production trade-offs, concurrency, and edge cases for high performers (score $\ge 3.8$), or offers accessible, guiding follow-ups for candidates who struggled on a topic.
+6. **Stage F — Wrap-Up & Rigorous Objective Evaluation:**  
+   Concludes cleanly when the question budget is reached, generating transparent dual scores and evidence-verified quotes without fabricating candidate capability.
 
 ---
 

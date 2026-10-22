@@ -173,6 +173,8 @@ from schemas.interview import (
     NextQuestionResponse,
     QuestionGenerationRequest,
     QuestionGenerationResponse,
+    RealtimeSessionRequest,
+    RealtimeSessionResponse,
 )
 from services.analyzer import (
     ResumeAnalyzer,
@@ -278,6 +280,17 @@ async def get_next_interview_question(request: NextQuestionRequest):
         raise HTTPException(
             status_code=500,
             detail="An unexpected error occurred while selecting the next interview question.",
+        )
+
+
+@app.post("/api/interviews/realtime-session", response_model=RealtimeSessionResponse)
+async def create_realtime_interview_session(request: RealtimeSessionRequest):
+    try:
+        return await interview_service.create_realtime_session(request)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"An unexpected error occurred while establishing real-time voice session: {str(e)}",
         )
 
 

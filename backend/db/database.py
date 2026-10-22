@@ -38,6 +38,21 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def init_db(target_engine=None) -> None:
-    """Initializes tables in database."""
+    """Initializes tables in database and applies lightweight SQLite migrations."""
     eng = target_engine or engine
     Base.metadata.create_all(bind=eng)
+
+    try:
+        from sqlalchemy import text
+        with eng.connect() as conn:
+            for col_sql in [
+                "ALTER TABLE interview_questions ADD COLUMN stage VARCHAR(32) DEFAULT 'technical_depth'",
+                "ALTER TABLE interview_questions ADD COLUMN acknowledgement VARCHAR(255)",
+            ]:
+                try:
+                    conn.execute(text(col_sql))
+                    conn.commit()
+                except Exception:
+                    pass
+    except Exception:
+        pass

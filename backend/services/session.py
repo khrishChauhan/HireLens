@@ -151,6 +151,8 @@ class SessionService:
                 difficulty=q.difficulty,
                 rubric=q.rubric,
                 is_follow_up=q.is_follow_up,
+                stage=getattr(q, "stage", "technical_depth") or "technical_depth",
+                acknowledgement=getattr(q, "acknowledgement", None),
                 order_index=current_count + idx,
             )
             db.add(question_model)
@@ -184,6 +186,8 @@ class SessionService:
                 difficulty=req.question.difficulty,
                 rubric=req.question.rubric,
                 is_follow_up=req.question.is_follow_up,
+                stage=getattr(req.question, "stage", "technical_depth") or "technical_depth",
+                acknowledgement=getattr(req.question, "acknowledgement", None),
                 order_index=len(session.questions),
             )
             db.add(q_model)
@@ -310,6 +314,8 @@ class SessionService:
                 difficulty=q.difficulty,  # type: ignore[arg-type]
                 rubric=q.rubric,
                 is_follow_up=q.is_follow_up,
+                stage=getattr(q, "stage", "technical_depth") or "technical_depth",
+                acknowledgement=getattr(q, "acknowledgement", None),
             )
             for q in session.questions
         ]
@@ -329,6 +335,8 @@ class SessionService:
                     difficulty="intermediate",
                     rubric="Technical evaluation rubric",
                     is_follow_up=False,
+                    stage="technical_depth",
+                    acknowledgement=None,
                 )
             else:
                 q_obj = GeneratedQuestion(
@@ -339,6 +347,8 @@ class SessionService:
                     difficulty=q_info.difficulty,  # type: ignore[arg-type]
                     rubric=q_info.rubric,
                     is_follow_up=q_info.is_follow_up,
+                    stage=getattr(q_info, "stage", "technical_depth") or "technical_depth",
+                    acknowledgement=getattr(q_info, "acknowledgement", None),
                 )
 
             try:

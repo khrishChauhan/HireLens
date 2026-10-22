@@ -117,6 +117,8 @@ export interface AdaptiveQuestion {
   difficulty: 'foundational' | 'intermediate' | 'advanced';
   rubric: string;
   is_follow_up: boolean;
+  stage?: string;
+  acknowledgement?: string | null;
 }
 
 export interface CriterionScore {
@@ -138,12 +140,20 @@ export interface AnswerEvaluationResponse {
   status: 'success';
 }
 
+export interface AgentActivityItem {
+  action: string;
+  summary: string;
+  details?: string | null;
+  timestamp: string;
+}
+
 export interface NextQuestionResponse {
   has_next_question: boolean;
   is_completed: boolean;
   next_question?: AdaptiveQuestion | null;
   decision_reason: string;
   remaining_budget: number;
+  agent_activities?: AgentActivityItem[];
   status: 'success';
 }
 

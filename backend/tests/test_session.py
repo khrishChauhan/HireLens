@@ -353,3 +353,49 @@ def test_extract_resume_creates_or_links_session(client):
     )
     # If the blank page text is empty, it returns 422 which is expected for blank PDF
     assert resp.status_code in [200, 422]
+
+
+def test_progressive_stage_and_acknowledgement_persistence(client):
+    """Verifies questions with stage and conversational acknowledgement survive persistence and recovery."""
+    create_resp = client.post("/api/sessions", json={})
+    session_id = create_resp.json()["session_id"]
+
+    q1 = {
+        "id": "q1_warmup",
+        "question": "Tell me a little about yourself and what you've been working on recently.",
+        "target_skill": "Engineering Background & Introduction",
+        "reason": "Warm-up introduction to establish conversational comfort",
+        "difficulty": "foundational",
+        "rubric": "Clarity of introduction and career trajectory.",
+        "is_follow_up": False,
+        "stage": "warm_up",
+        "acknowledgement": None,
+    }
+    q2 = {
+        "id": "q2_project",
+        "question": "I noticed you worked on HireLens. Could you explain what that project does?",
+        "target_skill": "Project Architecture & Problem Context",
+        "reason": "Exploring project in candidate's own words",
+        "difficulty": "foundational",
+        "rubric": "Clarity in communicating problem domain.",
+        "is_follow_up": False,
+        "stage": "project_overview",
+        "acknowledgement": "Thanks for that introduction.",
+    }
+
+    resp = client.post(
+        f"/api/sessions/{session_id}/questions",
+        json={"questions": [q1, q2]},
+    )
+    assert resp.status_code == 200
+
+    # Retrieve session from SQLite database to simulate page refresh / recovery
+    get_resp = client.get(f"/api/sessions/{session_id}")
+    assert get_resp.status_code == 200
+    recovered_data = get_resp.json()
+
+    assert len(recovered_data["questions"]) == 2
+    assert recovered_data["questions"][0]["stage"] == "warm_up"
+    assert recovered_data["questions"][0]["difficulty"] == "foundational"
+    assert recovered_data["questions"][1]["stage"] == "project_overview"
+    assert recovered_data["questions"][1]["acknowledgement"] == "Thanks for that introduction."

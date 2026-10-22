@@ -68,53 +68,53 @@ export const SAMPLE_ANALYSIS_PREVIEW: ResumeAnalysis = {
 export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
   {
     id: 1,
-    topic: 'System Architecture & High-Throughput Ingestion',
+    topic: 'Engineering Background & Introduction',
     context:
-      'Tailored to distributed systems and asynchronous event streaming mentioned in your resume',
+      'Warm-up introduction to establish conversational comfort and recent engineering focus',
     question:
-      'You highlighted building high-throughput backend services. How would you design an event-driven ingestion pipeline handling 100,000 events/second that guarantees idempotency and at-least-once processing without unbounded queue latency?',
+      'To kick things off, could you tell me a little about yourself, your engineering background, and what you’ve been working on recently?',
     rubricFocus:
-      'Evaluates distributed queue partitioning, dead-letter strategies, offset commit semantics, and memory backpressure.',
+      'Evaluates clarity of self-introduction, engineering trajectory, communication structure, and current technical focus.',
   },
   {
     id: 2,
-    topic: 'Concurrency & Reactive State Management',
+    topic: 'Project Architecture & Problem Context',
     context:
-      'Tailored to React, Next.js, and TypeScript frontend performance listed in your resume',
+      'Exploring candidate project experience and problem-solving context in their own words',
     question:
-      'When architecting a real-time analytics UI that consumes continuous high-frequency updates, what strategies do you employ to prevent main-thread UI jank, unnecessary component re-renders, and memory leaks from event listeners?',
+      'Could you walk me through a major software project you built recently? What was the core problem you were trying to solve, and what was your primary architectural role?',
     rubricFocus:
-      'Assesses understanding of React concurrent rendering, batching, state normalization, memoization, and requestAnimationFrame throttling.',
+      'Assesses ability to clearly articulate problem domain, project rationale, high-level architecture, and individual ownership without buzzwords.',
   },
   {
     id: 3,
-    topic: 'API Contracts & Graceful Degradation',
+    topic: 'Project Deep Dive & Technical Trade-Offs',
     context:
-      'Tailored to FastAPI, RESTful services, and microservice communication',
+      'Probing architectural choices, technologies, and personal ownership from the project',
     question:
-      'How do you design backward-compatible REST and gRPC API contracts across evolving service boundaries? In particular, how do you handle partial downstream service failures with circuit breakers and fallback caching?',
+      'In that project, what were the most critical technical choices or trade-offs you personally made, and how did you approach data flow and system reliability?',
     rubricFocus:
-      'Tests API schema versioning, idempotency keys, circuit-breaker thresholds, and deterministic error propagation.',
+      'Evaluates technical decision-making, understanding of chosen technologies, and personal implementation responsibility.',
   },
   {
     id: 4,
-    topic: 'Data Consistency & Relational Query Profiling',
+    topic: 'Topic Transition: Concurrency & State Management',
     context:
-      'Tailored to PostgreSQL and Redis caching layers',
+      'Transitioning naturally to target job requirements across backend and frontend systems',
     question:
-      'When scaling relational database writes, how do you evaluate whether to enforce strict serializable ACID transactions versus optimistic locking? Describe how you diagnose index bloat, sequential table scans, and deadlocks in PostgreSQL.',
+      'That makes sense. Let’s shift gears to how you handle concurrent users and data consistency. How do you design APIs and manage state to prevent race conditions or latency regressions?',
     rubricFocus:
-      'Evaluates relational transaction isolation levels, row-level locking nuances, EXPLAIN ANALYZE query profiling, and index strategies.',
+      'Assesses understanding of asynchronous concurrency, state synchronization, caching layers, and deterministic error propagation.',
   },
   {
     id: 5,
-    topic: 'Production Incident Triage & Engineering Judgment',
+    topic: 'Production Engineering Judgment & Scalability',
     context:
-      'Tailored to real-world engineering problem solving',
+      'Evaluating technical depth, failure mode containment, and engineering judgment',
     question:
-      'Walk us through a critical production performance regression or outage you diagnosed. What was your step-by-step methodology to isolate the root cause, mitigate immediate customer impact, and implement permanent structural safeguards?',
+      'Walk us through an interesting technical challenge or trade-off you had to navigate in production. What were the alternatives, and how did you decide on the final approach?',
     rubricFocus:
-      'Assesses systematic triage discipline, observability metrics (p99 latency, saturation, errors), post-mortem root cause analysis, and architectural resilience.',
+      'Assesses systematic triage discipline, trade-off evaluation under real-world constraints, and long-term architectural resilience.',
   },
 ];
 

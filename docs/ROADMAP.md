@@ -49,19 +49,32 @@
 - [x] Define question-level evaluation criteria and rubrics.
 - [x] Validate question quality via Groq JSON Schema mode.
 
-## Phase 7: Adaptive AI Interview
-- [x] Implement interview session state and bounded question budget.
-- [x] Evaluate candidate answers against 4-criterion rubrics.
-- [x] Generate adaptive follow-up questions for ambiguous responses.
-- [x] Validate cited evidence quotations against submitted answer text.
-- [x] Present dual scores (Resume Alignment vs Interview Performance).
-- [ ] Add voice interaction.
+## Phase 7: Natural, Conversational Technical Interview
+- [x] Progressive conversational flow (Stage A warm-up -> Stage B project overview -> Stage C deep dive -> Stage D topic transition -> Stage E technical depth -> Stage F wrap-up).
+- [x] Easy, open-ended warm-up questions without early algorithmic interrogation.
+- [x] Contextual exploration of candidate's actual projects in their own words.
+- [x] Technology-driven deep dives into components mentioned in candidate responses.
+- [x] Natural topic transitions with concise interviewer acknowledgements ("Got it.", "That makes sense.", "Interesting. What made you choose that approach?").
+- [x] Calibrated progressive difficulty (advanced depth for strong mastery, accessible guiding follow-ups for struggling responses).
+- [x] Dynamic repetition prevention ensuring duplicate questions are never repeated.
+- [x] SQLite session persistence of conversational stages, acknowledgements, and interview history.
+- [x] Comprehensive test suite (55 backend unit/integration tests passing).
+- [x] Add voice interaction (Phase 8 AI Voice Interviewer).
 
-## Phase 8: Advanced AI Architecture
-- [x] Implement RAG and retrieval evaluation (FastEmbed, in-memory cosine index, quote verification).
-- [ ] Add workflow orchestration with LangGraph.
-- [ ] Add an MCP server and authorized tools.
-- [ ] Add validation, retries, and failure handling.
+## Phase 8: Live Voice Interviewer (Browser Web Speech + Groq Adaptive Engine)
+- [x] Dedicated, immersive voice-interview modal with centered, audio-reactive animated Orb.
+- [x] Orb animation reacting to candidate microphone energy and interviewer speech.
+- [x] Continuous conversational interaction with silence-based turn-taking (no "Submit Answer" button required each turn).
+- [x] SpeechRecognition (STT) converting candidate microphone answers into text with substantive length validation (>= 20 chars).
+- [x] SpeechSynthesis (TTS) vocalizing interviewer questions and acknowledgements in natural cadence.
+- [x] Strict audio interlocking: microphone recognition is halted before assistant speech begins.
+- [x] Zero extra paid API keys: reuses existing `GROQ_API_KEY` on backend for adaptive question generation and evaluation.
+- [x] 8-state conversation machine (`idle`, `requesting_permission`, `listening`, `processing_answer`, `speaking`, `paused`, `error`, `completed`).
+- [x] Minimalist controls: Mute, Pause/Resume, Repeat Question, Done Speaking, Text Mode, End Interview.
+- [x] Slide-out glassmorphic transcript drawer displaying full conversational history and live 4-criteria Groq scorecards.
+- [x] SQLite session persistence of confirmed candidate answers and evaluations.
+- [x] Comprehensive test suites (59 backend pytest tests + 42 frontend tests passing).
+
 
 ## Phase 9: Final Reports and Evaluation
 - [ ] Generate evidence-backed assessment reports.

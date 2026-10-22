@@ -179,6 +179,11 @@ export async function analyzeResume(
 
 export interface QuestionGenerationPayload {
   job_description: string;
+  candidate_name?: string;
+  candidate_title?: string;
+  candidate_projects?: string[];
+  top_project_name?: string;
+  top_project_description?: string;
   matched_requirements?: RequirementMatchItem[];
   partially_matched_requirements?: RequirementMatchItem[];
   unmatched_requirements?: RequirementMatchItem[];
@@ -264,6 +269,8 @@ export async function evaluateInterviewAnswer(
 }
 
 export interface NextQuestionPayload {
+  session_id?: string;
+  resume_text?: string;
   interview_history: {
     question_id: string;
     question_text: string;
@@ -271,6 +278,8 @@ export interface NextQuestionPayload {
     candidate_answer: string;
     composite_score: number;
     is_follow_up?: boolean;
+    stage?: string;
+    acknowledgement?: string | null;
   }[];
   current_question: AdaptiveQuestion;
   last_answer: string;
@@ -278,6 +287,10 @@ export interface NextQuestionPayload {
   remaining_budget: number;
   max_budget: number;
   unaddressed_requirements?: string[];
+  candidate_name?: string;
+  candidate_projects?: string[];
+  job_description?: string;
+  target_role?: string;
 }
 
 /**
@@ -446,4 +459,55 @@ export async function completeSession(
   }
   return response.json() as Promise<SessionDetailResponse>;
 }
+
+export interface RealtimeSessionPayload {
+  session_id?: string | null;
+  candidate_name?: string;
+  candidate_title?: string;
+  candidate_projects?: string[];
+  top_project_name?: string;
+  top_project_description?: string;
+  job_description?: string;
+  target_role?: string;
+  remaining_budget?: number;
+  max_budget?: number;
+  voice?: string;
+}
+
+export interface RealtimeSessionApiResponse {
+  status: 'active' | 'missing_credentials' | 'provider_error';
+  client_secret?: string | null;
+  session_id?: string | null;
+  model: string;
+  voice: string;
+  instructions: string;
+  provider: string;
+  env_variable?: string | null;
+  message?: string | null;
+}
+
+/**
+ * Requests an ephemeral session token from backend for OpenAI Realtime WebRTC audio.
+ */
+export async function createRealtimeInterviewSession(
+  payload: RealtimeSessionPayload
+): Promise<RealtimeSessionApiResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/interviews/realtime-session`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    let errorDetail = 'Failed to create real-time voice interview session.';
+    try {
+      const err = await response.json();
+      if (err.detail) errorDetail = typeof err.detail === 'string' ? err.detail : JSON.stringify(err.detail);
+    } catch {}
+    throw new Error(errorDetail);
+  }
+
+  return response.json() as Promise<RealtimeSessionApiResponse>;
+}
+
 
